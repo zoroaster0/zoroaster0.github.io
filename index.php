@@ -1,0 +1,95 @@
+<?php
+// 假设的商店数据
+$stores = [
+    [
+        'region' => '三義鄉',
+        'name' => '春田窯文化事業有限公司',
+        'offer' => '園區內消費滿800元，贈送精美小禮物一份（餐廳除外）',
+        'address' => '苗栗縣三義鄉雙潭村七鄰大坪七號',
+        'phone' => '037 877 820',
+        'link' => 'https://www.springkiln.com.tw/'
+    ],
+    // 更多假设数据...
+];
+
+$result = [];
+
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['region']) || isset($_GET['store_name'])) {
+    $region = $_GET['region'] ?? '';
+    $storeName = $_GET['store_name'] ?? '';
+
+    foreach ($stores as $store) {
+        if ($region && $store['region'] !== $region) {
+            continue;
+        }
+        if ($storeName && mb_strpos($store['name'], $storeName) === false) {
+            continue;
+        }
+        $result[] = $store;
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>苗栗縣教師會特約商店查詢</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>苗栗縣教師會特約商店查詢</h1>
+    <p>請選擇地區直接查詢，也可以透過商店名稱或是特定商品內容查詢特約商店優惠</p>
+    <form action="index.php" method="GET">
+        <label for="region">地區：</label>
+        <select name="region" id="region">
+            <option value="">請選擇地區</option>
+            <option value="苗栗市">苗栗市</option>
+            <option value="頭份市">頭份市</option>
+			<option value="竹南鎮">竹南鎮</option>
+			<option value="後龍鎮">後龍鎮</option>
+			<option value="通霄鎮">通霄鎮</option>
+			<option value="苑裡鎮">苑裡鎮</option>
+			<option value="卓蘭鎮">卓蘭鎮</option>
+			<option value="三灣鄉">三灣鄉</option>
+			<option value="南庄鄉">南庄鄉</option>
+			<option value="造橋鄉">造橋鄉</option>
+			<option value="頭屋鄉">頭屋鄉</option>
+			<option value="獅潭鄉">獅潭鄉</option>
+			<option value="公館鄉">公館鄉</option>
+			<option value="西湖鄉">西湖鄉</option>
+			<option value="銅鑼鄉">銅鑼鄉</option>
+			<option value="三義鄉">三義鄉</option>
+			<option value="大湖鄉">大湖鄉</option>
+			<option value="泰安鄉">泰安鄉</option>
+			<option value="其他縣市">其他縣市</option>
+            <!-- 添加更多地區选项 -->
+        </select><br>
+
+        <label for="store_name">商店名稱或是商品內容：</label>
+        <input type="text" name="store_name" id="store_name" value=""><br>
+
+        <button type="submit">查詢</button>
+    </form>
+
+    <?php if (!empty($result)): ?>
+        <h2>查询结果</h2>
+        <ul>
+            <?php foreach ($result as $store): ?>
+                <li>
+                    <strong><?= htmlspecialchars($store['name']) ?></strong><br>
+                    地區: <?= htmlspecialchars($store['region']) ?><br>
+                    優惠: <?= htmlspecialchars($store['offer']) ?><br>
+                    地址: <?= htmlspecialchars($store['address']) ?><br>
+                    電話: <?= htmlspecialchars($store['phone']) ?><br>
+                    連結: <a href="<?= htmlspecialchars($store['link']) ?>" target="_blank">訪問</a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php elseif ($_SERVER['REQUEST_METHOD'] == 'GET' && (isset($_GET['region']) || isset($_GET['store_name']))): ?>
+        <p>没有找到匹配的结果。</p>
+    <?php endif; ?>
+</div>
+</body>
+</html>
